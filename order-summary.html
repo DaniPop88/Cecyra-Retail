@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Order Confirmation | CECYRA RETAIL MARKET</title>
+  <link rel="icon" type="image/png" href="image/FAVICON.png" />
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet" />
+  <!-- Remixicon for icons -->
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet" />
+  <style>
+    :root {
+      --primary: #259c60;
+      --accent: #ffa92e;
+      --text: #222c1b;
+      --background: #f6faf7;
+      --white: #fff;
+      --radius: 1rem;
+      --shadow: 0 8px 28px 0 rgba(37,156,96,0.10);
+      --border: 1px solid #e3efdf;
+      --footer-bg: #1b2e23;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Montserrat', Arial, sans-serif;
+      background: var(--background);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.7;
+    }
+    a {
+      color: var(--primary);
+      text-decoration: none;
+      transition: color .2s;
+    }
+    a:hover { color: var(--accent); }
+    img { max-width: 100%; display: block; border-radius: .6rem; }
+    button, input {
+      font-family: inherit; outline: none; border: none; background: none;
+    }
+    .header {
+      width: 100%;
+      background: var(--white);
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 99;
+    }
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1.2rem 2rem;
+      position: relative;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      font-size: 1.2rem;
+      font-weight: 900;
+      color: var(--primary);
+      letter-spacing: 1px;
+    }
+    .nav-logo img { width: 42px; height: 42px; }
+    .nav-actions { display: flex; align-items: center; gap: 1.2rem; }
+    .nav-toggle {
+      display: none;
+      font-size: 2rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--primary);
+      margin-left: 1rem;
+      z-index: 200;
+    }
+    main {
+      max-width: 540px;
+      margin: 0 auto;
+      padding: 2.5rem 1.1rem 2rem;
+    }
+    .confirmation-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 2.2rem 1.4rem;
+      margin-bottom: 2.1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      position: relative;
+    }
+    .confirmation-icon {
+      font-size: 2.8rem;
+      color: var(--primary);
+      margin-bottom: 1.2rem;
+    }
+    .confirmation-title {
+      font-size: 1.65rem;
+      font-weight: 900;
+      color: var(--primary);
+      margin-bottom: 1.1rem;
+    }
+    .confirmation-message {
+      font-size: 1.05rem;
+      color: var(--text);
+      margin-bottom: 1.4rem;
+      max-width: 440px;
+      line-height: 1.7;
+    }
+    .order-summary-details {
+      background: #eafaea;
+      border-radius: .8rem;
+      box-shadow: 0 2px 10px 0 rgba(37,156,96,0.07);
+      width: 100%;
+      margin-bottom: 2.2rem;
+      padding: 1.4rem 1rem;
+      text-align: left;
+      font-size: 1rem;
+    }
+    .order-summary-details h2 {
+      font-size: 1.15rem;
+      font-weight: 900;
+      color: var(--primary);
+      margin-bottom: .9rem;
+    }
+    .order-summary-list {
+      list-style: none;
+      padding: 0;
+      margin-bottom: 0.6rem;
+    }
+    .order-summary-list li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: .6rem;
+      font-size: 1rem;
+    }
+    .order-summary-label {
+      color: #259c60;
+      font-weight: 700;
+    }
+    .order-summary-value {
+      color: var(--text);
+      font-weight: 400;
+    }
+    .order-summary-total {
+      font-size: 1.14rem;
+      font-weight: 900;
+      color: var(--primary);
+      margin-top: 1.1rem;
+    }
+    .important-note {
+      background: #fffbea;
+      border-left: 6px solid var(--accent);
+      border-radius: .6rem;
+      color: #a55d00;
+      padding: 1rem 1rem 1rem 1.2rem;
+      margin-bottom: 2.1rem;
+      font-size: 1.03rem;
+      box-shadow: 0 2px 10px 0 rgba(255,169,46,0.07);
+    }
+    .customer-actions {
+      margin-top: 1.7rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.3rem;
+    }
+    .action-btn {
+      padding: 0.7rem 2.2rem;
+      background: var(--primary);
+      color: var(--white);
+      border-radius: .7rem;
+      font-weight: 700;
+      font-size: 1.08rem;
+      box-shadow: 0 2px 8px 0 rgba(37,156,96,.08);
+      cursor: pointer;
+      border: none;
+      transition: background .2s, color .2s;
+    }
+    .action-btn:hover {
+      background: var(--accent);
+      color: var(--primary);
+    }
+    .footer {
+      background: var(--footer-bg);
+      color: var(--white);
+      padding: 2rem 0 1rem;
+      margin-top: 2.2rem;
+      border-radius: var(--radius) var(--radius) 0 0;
+      text-align: center;
+    }
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      font-size: 1.1rem;
+      font-weight: 900;
+      gap: .6rem;
+      margin-bottom: 0.5rem;
+      color: var(--accent);
+      justify-content: center;
+    }
+    .footer-logo img { width: 30px; height: 30px; }
+    .footer-desc { color: #ffa92e; font-size: 0.98rem; margin-bottom: .6rem;}
+    .footer-bottom {
+      font-size: .95rem;
+      color: #eafaea;
+      margin-top: 1rem;
+      opacity: .85;
+    }
+    .footer-bottom a {
+      color: #fff;
+      font-weight: 700;
+      text-decoration: underline;
+      transition: color .2s;
+    }
+    .footer-bottom a:hover { color: var(--accent);}
+    @media (max-width: 600px) {
+      main {
+        padding: 1.2rem .7rem 1rem;
+      }
+      .confirmation-card {
+        padding: 1.2rem .65rem;
+      }
+      .order-summary-details {
+        padding: 1rem .3rem;
+      }
+      .footer-logo img { width: 22px; height: 22px; }
+    }
+    @media (max-width: 400px) {
+      .confirmation-title {
+        font-size: 1.2rem;
+      }
+      .order-summary-details h2 {
+        font-size: 1rem;
+      }
+      .action-btn {
+        font-size: 0.95rem;
+        padding: 0.6rem 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header" id="header">
+    <nav class="nav">
+      <a href="index.html" class="nav-logo">
+        <img src="image/LOGO.png" alt="CECYRA Retail Market Logo" />
+        CECYRA RETAIL MARKET
+      </a>
+      <div class="nav-actions">
+        <button class="nav-toggle" id="nav-toggle" aria-label="Open menu" style="display:none;"><i class="ri-menu-3-line"></i></button>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="confirmation-card" id="confirmation-section">
+      <div class="confirmation-icon"><i class="ri-checkbox-circle-line"></i></div>
+      <div class="confirmation-title">Order Received! Thank You for Shopping With Us</div>
+      <div class="confirmation-message" id="confirmation-message">
+        Your order has been successfully submitted. Our team will be in touch soon to confirm every detail, including product options, colors, and real-time availability. Please review your order summary below and await a message from us. Once you verify the details, we will send your payment link according to your selected payment method.
+      </div>
+      <div class="order-summary-details" id="order-summary-details">
+        <h2>Order Summary</h2>
+        <ul class="order-summary-list" id="order-summary-list">
+          <li>
+            <span class="order-summary-label">Order Number:</span>
+            <span class="order-summary-value" id="order-number">#20250821001</span>
+          </li>
+          <li>
+            <span class="order-summary-label">Customer Name:</span>
+            <span class="order-summary-value" id="customer-name">John Doe</span>
+          </li>
+          <li>
+            <span class="order-summary-label">Contact Email:</span>
+            <span class="order-summary-value" id="customer-email">johndoe@email.com</span>
+          </li>
+          <li>
+            <span class="order-summary-label">Delivery Address:</span>
+            <span class="order-summary-value" id="customer-address">4 Interior Kalubasa St, Evergreen Homes, Las Piñas City</span>
+          </li>
+          <li>
+            <span class="order-summary-label">Payment Method:</span>
+            <span class="order-summary-value" id="payment-method">GCash</span>
+          </li>
+        </ul>
+        <div class="order-summary-list" id="products-list">
+          <strong style="color: var(--primary); font-weight:700;">Products:</strong>
+          <ul style="margin-left:.7rem; margin-top:.5rem;">
+            <li>Fresh Lettuce x 2</li>
+            <li>Whole Chicken x 1</li>
+            <li>Laundry Detergent (1kg) x 3</li>
+          </ul>
+        </div>
+        <div class="order-summary-total" id="order-total">
+          Total: ₱470.98
+        </div>
+      </div>
+      <div class="important-note">
+        <strong>Important:</strong> After confirming your order details with our team, you will receive a payment link. Please complete your payment within 24 hours to ensure your order is processed. Unpaid orders will be automatically cancelled after the deadline. If you have any questions, contact our support anytime.
+      </div>
+      <div class="customer-actions" id="customer-actions">
+        <button class="action-btn" id="confirm-details-btn">Confirm Order Details</button>
+        <div id="after-confirmation-message" style="display:none;">
+          <div style="color:var(--primary);font-weight:700;margin-bottom:.7rem;">
+            Thank you for confirming! Expect your payment link soon by your chosen method. Please check your email or messages for instructions.
+          </div>
+          <div style="font-size:1rem;color:var(--text);">
+            Remember: Your order will only be processed after payment is received. Payment must be completed within 24 hours to avoid cancellation. We appreciate your prompt response!
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-logo">
+      <img src="image/LOGO.png" alt="CECYRA Retail Market Logo" />
+      CECYRA RETAIL MARKET
+    </div>
+    <div class="footer-desc">
+      4 Interior Kalubasa St, Evergreen Homes, Pulang Lupa Uno, Las Piñas City, NCR 1742, Philippines<br>
+      Email: <a href="mailto:info@cecyramarket.store" style="color:var(--accent);">info@cecyramarket.store</a><br>
+      Phone: <a href="tel:+639213708965" style="color:var(--accent);">+63 921 370 8965</a><br>
+      TIN: 173-495-620-000
+    </div>
+    <div class="footer-bottom">
+      &copy; <span id="footer-year"></span> CECYRA RETAIL MARKET | TIN: 173-495-620-000<br>
+      Serving Las Piñas City and surrounding communities with pride.
+    </div>
+  </footer>
+
+  <script>
+    // Footer year
+    document.getElementById('footer-year').textContent = new Date().getFullYear();
+
+    // Confirmation process
+    document.getElementById('confirm-details-btn').addEventListener('click', function() {
+      document.getElementById('confirm-details-btn').style.display = 'none';
+      document.getElementById('after-confirmation-message').style.display = 'block';
+      document.getElementById('confirmation-message').textContent =
+        "Thank you for confirming your order details. Our team will now send your payment link to your preferred contact method. Please complete your payment within 24 hours. For any queries or changes, reach out to our support team promptly.";
+    });
+  </script>
+</body>
+</html>
