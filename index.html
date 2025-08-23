@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CECYRA RETAIL MARKET | Local Grocery & Essentials in Las Piñas</title>
+  <link rel="icon" type="image/png" href="image/FAVICON.png" />
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet" />
+  <!-- Remixicon for icons -->
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet" />
+  <style>
+    :root {
+      --primary: #259c60;
+      --accent: #ffa92e;
+      --text: #222c1b;
+      --background: #f6faf7;
+      --white: #fff;
+      --radius: 1rem;
+      --shadow: 0 8px 28px 0 rgba(37,156,96,0.10);
+      --border: 1px solid #e3efdf;
+      --footer-bg: #1b2e23;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Montserrat', Arial, sans-serif;
+      background: var(--background);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.7;
+    }
+    a {
+      color: var(--primary);
+      text-decoration: none;
+      transition: color .2s;
+    }
+    a:hover { color: var(--accent); }
+    img { max-width: 100%; display: block; border-radius: .6rem; }
+    button, input {
+      font-family: inherit; outline: none; border: none; background: none;
+    }
+    /* Header */
+    .header {
+      width: 100%; background: var(--white); box-shadow: var(--shadow);
+      position: sticky; top: 0; z-index: 99;
+    }
+    .nav {
+      display: flex; align-items: center; justify-content: space-between;
+      max-width: 1200px; margin: 0 auto; padding: 1.2rem 2rem;
+      position: relative;
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 0.7rem; font-size: 1.2rem; font-weight: 900; color: var(--primary);
+      letter-spacing: 1px;
+    }
+    .nav-logo img { width: 42px; height: 42px; }
+    .nav-list {
+      display: flex; align-items: center; gap: 2rem;
+    }
+    .nav-link {
+      color: var(--text); font-weight: 700;
+      font-size: 1rem; padding: 0.2rem 0;
+      position: relative;
+      transition: color .2s;
+    }
+    .nav-link.active, .nav-link:hover { color: var(--primary); }
+    .nav-actions { display: flex; align-items: center; gap: 1.2rem; }
+    .nav-toggle {
+      display: none; font-size: 2rem; background: none; border: none; cursor: pointer; color: var(--primary); margin-left: 1rem;
+      z-index: 200;
+    }
+    /* Cart Floating Button */
+    .floating-cart-btn {
+      position: fixed;
+      left: 30px; bottom: 30px; z-index: 150;
+      background: var(--primary);
+      color: var(--white);
+      border-radius: 50%;
+      width: 54px; height: 54px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; box-shadow: 0 2px 12px 0 rgba(37,156,96,0.13);
+      cursor: pointer; border: none;
+      transition: background .2s, color .2s, box-shadow .2s;
+    }
+    .floating-cart-btn:hover {
+      background: var(--accent);
+      color: var(--primary);
+    }
+    @media (max-width: 500px) {
+      .floating-cart-btn {
+        left: 10px; bottom: 10px; width: 42px; height: 42px; font-size: 1.3rem;
+      }
+    }
+    /* Cart Sidebar & Overlay */
+    .cart-overlay {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(37,156,96,0.14); z-index: 100; display: none;
+    }
+    .cart-overlay.active { display: block; }
+    .cart-sidebar {
+      position: fixed; top: 0; right: -100%; width: 350px; max-width: 96vw; height: 100%;
+      background: var(--white); box-shadow: -2px 0 16px 0 rgba(37,156,96,0.12);
+      z-index: 101; padding: 2rem 1.5rem; display: flex; flex-direction: column; transition: right .25s;
+      overflow-y: auto;
+    }
+    .cart-sidebar.open { right: 0; }
+    .cart-sidebar-header {
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem;
+    }
+    .cart-sidebar-title { font-size: 1.15rem; font-weight: 900; color: var(--primary); }
+    .cart-sidebar-close {
+      font-size: 1.7rem; color: var(--primary); cursor: pointer; background: none; border: none;
+      transition: color .2s;
+    }
+    .cart-items { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 1.2rem; }
+    .cart-item {
+      display: flex; gap: 1rem; align-items: flex-start; border-bottom: 1px solid #e3efdf; padding-bottom: 1rem;
+    }
+    .cart-item-img { width: 55px; height: 55px; object-fit: contain; border-radius: .6rem; background: #eafaea; }
+    .cart-item-details { flex: 1; }
+    .cart-item-title { font-size: 1rem; font-weight: 700; margin-bottom: .12rem; }
+    .cart-item-price { color: var(--primary); font-weight: 700; margin-bottom: .12rem; font-size: 0.97rem; }
+    .cart-item-qty {
+      display: flex; align-items: center; gap: .4rem; margin-top: .18rem;
+    }
+    .cart-item-qty-btn {
+      font-size: 1.05rem; background: var(--background); border-radius: .3rem; padding: 2px 7px; cursor: pointer;
+      color: var(--primary); border: 1px solid #cce4da; transition: background .2s, color .2s;
+    }
+    .cart-item-qty-btn:hover { background: var(--primary); color: var(--white); }
+    .cart-item-remove {
+      color: #e14d4d; font-size: 1.13rem; margin-left: .5rem; cursor: pointer; background: none; border: none; transition: color .2s;
+    }
+    .cart-sidebar-footer {
+      margin-top: 2rem; display: flex; align-items: center; justify-content: space-between; font-weight: 700; font-size: 1.05rem;
+    }
+    .cart-sidebar-footer .checkout-btn {
+      padding: 0.6rem 1.3rem; background: var(--primary); color: var(--white); border-radius: .5rem; border: none;
+      font-weight: 700; cursor: pointer; transition: background .2s;
+    }
+    .cart-sidebar-footer .checkout-btn:hover { background: var(--accent); color: var(--primary); }
+    /* Main Content */
+    main { max-width: 1130px; margin: 0 auto; padding: 2rem 1.1rem 3rem; }
+    .hero {
+      display: flex; align-items: center; justify-content: space-between; gap: 2.5rem;
+      background: linear-gradient(90deg, #eafaea 0%, #f6faf7 100%);
+      border-radius: var(--radius); padding: 2rem 2.3rem; margin-bottom: 2.2rem;
+      box-shadow: var(--shadow); flex-wrap: wrap;
+    }
+    .hero-content { flex: 1; min-width: 260px; }
+    .hero-title {
+      font-size: 2.1rem; font-weight: 900; color: var(--primary); line-height: 1.1; margin-bottom: 1.1rem;
+    }
+    .hero-desc { color: #259c60; font-size: 1rem; margin-bottom: 1.5rem; max-width: 430px; }
+    .hero-btns { display: flex; gap: 1.05rem; }
+    .btn-primary, .btn-secondary {
+      padding: 0.8rem 2rem; font-size: 1rem; border-radius: .7rem; font-weight: 700;
+      cursor: pointer; transition: background .2s, color .2s, box-shadow .2s; box-shadow: 0 2px 8px 0 rgba(37,156,96,.08);
+      outline: none; border: none;
+    }
+    .btn-primary { background: var(--primary); color: var(--white); }
+    .btn-primary:hover { background: var(--accent); color: var(--primary);}
+    .btn-secondary { background: var(--white); color: var(--primary); border: 2px solid var(--primary);}
+    .btn-secondary:hover { background: var(--primary); color: var(--white);}
+    .hero-img-container { min-width: 220px; flex: 1; display: flex; justify-content: flex-end; align-items: center;}
+    .hero-img {
+      width: 280px; max-width: 100%; border-radius: var(--radius); box-shadow: 0 2px 24px 0 rgba(37,156,96,.13); background: #eafaea; object-fit: contain;
+    }
+    /* Product Section */
+    .section-title {
+      font-size: 1.7rem; color: var(--primary); font-weight: 900; text-align: center; margin-bottom: 1.6rem; margin-top: .8rem;
+    }
+    .products-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.7rem; margin-bottom: 2.3rem;
+    }
+    .product-card {
+      background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); padding: 1.2rem 1rem;
+      display: flex; flex-direction: column; align-items: center; transition: transform .18s, box-shadow .2s; position: relative;
+    }
+    .product-card:hover { transform: translateY(-5px) scale(1.03); box-shadow: 0 11px 28px 0 rgba(37,156,96,.15);}
+    .product-img { width: 105px; height: 105px; object-fit: contain; margin-bottom: 1rem; background: #eafaea; border-radius: .5rem;}
+    .product-name { font-weight: 900; font-size: 1.05rem; text-align: center; margin-bottom: .3rem;}
+    .product-desc { font-size: 0.96rem; color: #259c60; margin-bottom: 0.55rem; text-align: center;}
+    .product-stock { font-size: 0.93rem; margin-bottom: 0.2rem; color: var(--primary);}
+    .product-price { font-weight: 700; font-size: 1.08rem; color: var(--primary); margin-bottom: .8rem;}
+    .product-add {
+      background: var(--primary); color: var(--white); border-radius: .4rem; padding: 0.5rem 1.2rem; font-weight: 900; cursor: pointer; font-size: 1rem; border: none;
+      transition: background .2s; display: flex; align-items: center; gap: .4rem;
+    }
+    .product-add:hover { background: var(--accent); color: var(--primary);}
+    .product-badge {
+      position: absolute; top: 1rem; right: 1rem; background: var(--accent); color: var(--white); font-weight: 700; font-size: .87rem;
+      padding: 0.17rem 0.6rem; border-radius: .5rem; letter-spacing: 1px; box-shadow: 0 2px 8px 0 rgba(255,169,46,0.09);
+    }
+    /* Info Sections */
+    .info-sections {
+      display: flex; flex-wrap: wrap; gap: 1.5rem; margin-bottom: 2rem; justify-content: center;
+    }
+    .info-card {
+      background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); padding: 1.4rem 1rem; min-width: 200px; flex: 1 1 220px;
+      display: flex; flex-direction: column; align-items: center; text-align: center; max-width: 350px;
+    }
+    .info-icon { font-size: 2rem; color: var(--primary); margin-bottom: 0.6rem;}
+    .info-title { font-size: 1.06rem; font-weight: 900; margin-bottom: .3rem;}
+    .info-desc { color: #259c60; font-size: 0.96rem;}
+    /* Policy Sections */
+    .policy-sections {
+      display: flex; flex-wrap: wrap; gap: 1.2rem; margin: 1.5rem 0; justify-content: center;
+    }
+    .policy-card {
+      background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); padding: 1.5rem 1rem; min-width: 200px; flex: 1 1 200px;
+      max-width: 350px; text-align: left; display: flex; flex-direction: column;
+    }
+    .policy-title { font-size: 1.12rem; font-weight: 900; margin-bottom: .55rem; color: var(--primary);}
+    .policy-body { color: #259c60; font-size: 0.97rem; line-height: 1.7;}
+    /* Footer */
+    .footer {
+      background: var(--footer-bg); color: var(--white); padding: 2.5rem 0 1.1rem; margin-top: 2.5rem; border-radius: var(--radius) var(--radius) 0 0;
+    }
+    .footer-container {
+      max-width: 1180px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 2rem; justify-content: space-between; align-items: flex-start; padding: 0 2rem;
+    }
+    .footer-brand { flex: 1 1 220px; margin-bottom: 2rem;}
+    .footer-logo {
+      display: flex; align-items: center; font-size: 1.2rem; font-weight: 900; gap: .5rem; margin-bottom: 0.45rem; color: var(--accent);
+    }
+    .footer-logo img { width: 32px; height: 32px; }
+    .footer-desc { color: #ffa92e; font-size: 0.98rem; margin-bottom: .6rem;}
+    .footer-links-group { flex: 1 1 160px; margin-bottom: 2rem;}
+    .footer-links-title { font-size: 1rem; font-weight: 900; margin-bottom: .35rem; letter-spacing: .5px;}
+    .footer-links { display: flex; flex-direction: column; gap: .35rem;}
+    .footer-link { color: #eafaea; font-size: .96rem; transition: color .2s; opacity: .94;}
+    .footer-link:hover { color: var(--accent);}
+    .footer-bottom { text-align: center; font-size: .95rem; color: #eafaea; margin-top: 1.5rem; opacity: .85;}
+    .footer-bottom a { color: #fff; font-weight: 700; text-decoration: underline; transition: color .2s;}
+    .footer-bottom a:hover { color: var(--accent);}
+    /* Responsive */
+    @media (max-width: 1100px) {
+      .hero { flex-direction: column; text-align: center; }
+      .hero-content, .hero-img-container { justify-content: center; }
+      .hero-img { margin: 1.5rem auto 0 auto; }
+    }
+    @media (max-width: 900px) {
+      .nav-list { gap: 1.1rem; }
+      .footer-container { flex-direction: column; gap: 2.2rem; align-items: flex-start; }
+    }
+    @media (max-width: 700px) {
+      .nav { padding: 1.1rem .7rem; }
+      .main { padding: 1.2rem .5rem 2rem; }
+      .products-grid, .info-sections, .policy-sections { gap: .7rem; }
+      .footer-container { padding: 0 1rem; }
+      .nav-list {
+        position: fixed; top: 0; right: -100vw; width: 80vw; height: 100vh; background: var(--white);
+        flex-direction: column; gap: 1.6rem; padding-top: 4rem; z-index: 120; transition: right .25s;
+        box-shadow: -2px 0 18px 0 rgba(37,156,96,0.09);
+      }
+      .nav-list.open { right: 0; }
+      .nav-toggle { display: block; }
+      .nav-close {
+        display: none;
+      }
+      .nav-list .nav-close {
+        display: block;
+        position: absolute;
+        top: 1.1rem;
+        right: 1.3rem;
+        background: none;
+        border: none;
+        font-size: 1.7rem;
+        color: var(--primary);
+        cursor: pointer;
+        z-index: 999;
+      }
+    }
+    @media (max-width: 600px) {
+      .hero { padding: 1rem .6rem; }
+      .policy-card { padding: 1rem .5rem; }
+      .footer { padding: 1.2rem 0 .9rem; }
+    }
+    @media (max-width: 430px) {
+      .cart-sidebar { width: 98vw; padding: 1rem .5rem; }
+      .footer-logo img { width: 24px; height: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="header" id="header">
+    <nav class="nav">
+      <a href="index.html" class="nav-logo">
+        <img src="image/LOGO.png" alt="CECYRA Retail Market Logo" />
+        CECYRA RETAIL MARKET
+      </a>
+      <ul class="nav-list" id="nav-list">
+        <li><a href="index.html" class="nav-link active">Home</a></li>
+        <li><a href="#shop" class="nav-link">Products</a></li>
+        <li><a href="#about" class="nav-link">About Us</a></li>
+        <li><a href="#services" class="nav-link">Services</a></li>
+        <li><a href="#testimonials" class="nav-link">Testimonials</a></li>
+        <li><a href="#faq" class="nav-link">FAQ</a></li>
+        <li><a href="#contact" class="nav-link">Contact</a></li>
+        <button class="nav-close" id="nav-close" aria-label="Close menu"><i class="ri-close-line"></i></button>
+      </ul>
+      <div class="nav-actions">
+        <button class="nav-toggle" id="nav-toggle" aria-label="Open menu"><i class="ri-menu-3-line"></i></button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Floating Cart Button -->
+  <button class="floating-cart-btn" id="cart-btn" aria-label="Open cart">
+    <i class="ri-shopping-basket-2-line"></i>
+  </button>
+
+  <!-- Cart Sidebar & Overlay -->
+  <div class="cart-overlay" id="cart-overlay"></div>
+  <aside class="cart-sidebar" id="cart-sidebar" aria-label="Shopping cart">
+    <div class="cart-sidebar-header">
+      <div class="cart-sidebar-title">My Cart</div>
+      <button class="cart-sidebar-close" id="cart-close-btn" aria-label="Close cart"><i class="ri-close-line"></i></button>
+    </div>
+    <div class="cart-items" id="cart-items">
+      <!-- Cart items will be rendered here by JS -->
+    </div>
+    <div class="cart-sidebar-footer">
+      <span><span id="cart-items-count">0</span> items | <span id="cart-total">₱0</span></span>
+      <button class="checkout-btn" id="checkout-btn">Checkout</button>
+    </div>
+  </aside>
+
+  <main>
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+      <div class="hero-content">
+        <h1 class="hero-title">CECYRA RETAIL MARKET</h1>
+        <div class="hero-desc">
+          4 Interior Kalubasa St, Evergreen Homes, Pulang Lupa Uno, Las Piñas City, NCR 1742<br>
+          Your friendly neighborhood grocery store in Las Piñas.<br>
+          Fresh produce, pantry staples, household essentials — all at fair prices. Open daily with local delivery & in-store service.
+        </div>
+        <div class="hero-btns">
+          <a href="#shop" class="btn-primary">Browse Products</a>
+          <a href="#contact" class="btn-secondary">Contact Us</a>
+        </div>
+      </div>
+      <div class="hero-img-container">
+        <img src="image/placeholder.png" alt="CECYRA Market Storefront" class="hero-img" />
+      </div>
+    </section>
+
+    <!-- About Us -->
+    <section class="info-sections" id="about">
+      <div class="info-card">
+        <div class="info-icon"><i class="ri-home-heart-line"></i></div>
+        <div class="info-title">Who We Are</div>
+        <div class="info-desc">
+          Community-oriented retail shop founded by Ma. Cecilia Talaro, serving Evergreen Homes and neighboring barangays.
+        </div>
+      </div>
+      <div class="info-card">
+        <div class="info-icon"><i class="ri-star-smile-line"></i></div>
+        <div class="info-title">Mission</div>
+        <div class="info-desc">
+          To be the neighborhood grocery that families trust for fresh produce, reliable essentials, and friendly service.
+        </div>
+      </div>
+      <div class="info-card">
+        <div class="info-icon"><i class="ri-team-line"></i></div>
+        <div class="info-title">Our Team</div>
+        <div class="info-desc">
+          Managed locally by Ma. Cecilia Talaro and a dedicated team — ready to assist you quickly and respectfully.
+        </div>
+      </div>
+    </section>
+
+    <!-- Services -->
+    <section class="info-sections" id="services">
+      <div class="info-card">
+        <div class="info-icon"><i class="ri-shopping-cart-line"></i></div>
+        <div class="info-title">In-store Shopping</div>
+        <div class="info-desc">Visit us for friendly service & a wide selection.</div>
+      </div>
+      <div class="info-card">
+        <div class="info-icon"><i class="ri-truck-line"></i></div>
+        <div class="info-title">Local Delivery</div>
+        <div class="info-desc">Fast delivery within Las Piñas. Same-day for orders before 4PM.</div>
+      </div>
+      <div class="info-card">
+        <div class="info-icon"><i class="ri-wallet-3-line"></i></div>
+        <div class="info-title">Easy Payments</div>
+        <div class="info-desc">Cash, GCash, PayMaya, and card payments in-store.</div>
+      </div>
+      <div class="info-card">
+        <div class="info-icon"><i class="ri-box-3-line"></i></div>
+        <div class="info-title">Bulk & Special Orders</div>
+        <div class="info-desc">Order in advance for events or large needs.</div>
+      </div>
+    </section>
+
+    <!-- Products -->
+    <section id="shop">
+      <h2 class="section-title">Today's Featured Products</h2>
+      <div class="products-grid" id="products-grid">
+        <div class="product-card" data-id="1">
+          <span class="product-badge">Qty: 10</span>
+          <img src="image/placeholder.png" alt="Fresh Lettuce" class="product-img" />
+          <div class="product-name">Fresh Lettuce</div>
+          <div class="product-desc">Local, per bundle. Crisp and ideal for salads.</div>
+          <div class="product-price">₱35.99</div>
+          <button class="product-add"><i class="ri-shopping-cart-2-line"></i> Add to Cart</button>
+        </div>
+        <div class="product-card" data-id="2">
+          <span class="product-badge">Qty: 7</span>
+          <img src="image/placeholder.png" alt="Whole Chicken" class="product-img" />
+          <div class="product-name">Whole Chicken</div>
+          <div class="product-desc">Fresh, cleaned, ready to cook. Per kg.</div>
+          <div class="product-price">₱180.00</div>
+          <button class="product-add"><i class="ri-shopping-cart-2-line"></i> Add to Cart</button>
+        </div>
+        <div class="product-card" data-id="3">
+          <span class="product-badge">Qty: 5</span>
+          <img src="image/placeholder.png" alt="Premium Jasmine Rice" class="product-img" />
+          <div class="product-name">Premium Jasmine Rice</div>
+          <div class="product-desc">5kg pack, soft & fragrant.</div>
+          <div class="product-price">₱320.00</div>
+          <button class="product-add"><i class="ri-shopping-cart-2-line"></i> Add to Cart</button>
+        </div>
+        <div class="product-card" data-id="4">
+          <span class="product-badge">Qty: 12</span>
+          <img src="image/placeholder.png" alt="Eggs (Tray of 30)" class="product-img" />
+          <div class="product-name">Eggs (Tray of 30)</div>
+          <div class="product-desc">Farm fresh, daily arrivals.</div>
+          <div class="product-price">₱170.00</div>
+          <button class="product-add"><i class="ri-shopping-cart-2-line"></i> Add to Cart</button>
+        </div>
+        <div class="product-card" data-id="5">
+          <span class="product-badge">Qty: 9</span>
+          <img src="image/placeholder.png" alt="Pandesal (12 pcs)" class="product-img" />
+          <div class="product-name">Pandesal (12 pcs)</div>
+          <div class="product-desc">Soft, locally baked, delivered fresh daily.</div>
+          <div class="product-price">₱49.00</div>
+          <button class="product-add"><i class="ri-shopping-cart-2-line"></i> Add to Cart</button>
+        </div>
+        <div class="product-card" data-id="6">
+          <span class="product-badge">Qty: 8</span>
+          <img src="image/placeholder.png" alt="Laundry Detergent (1kg)" class="product-img" />
+          <div class="product-name">Laundry Detergent (1kg)</div>
+          <div class="product-desc">Trusted brands for clean, fresh clothes.</div>
+          <div class="product-price">₱60.00</div>
+          <button class="product-add"><i class="ri-shopping-cart-2-line"></i> Add to Cart</button>
+        </div>
+        <div class="product-card" data-id="7">
+          <span class="product-badge">Qty: 15</span>
+          <img src="image/placeholder.png" alt="Cooking Oil (1L)" class="product-img" />
+          <div class="product-name">Cooking Oil (1L)</div>
+          <div class="product-desc">Premium & affordable for everyday needs.</div>
+          <div class="product-price">₱95.00</div>
+          <button class="product-add"><i class="ri-shopping-cart-2-line"></i> Add to Cart</button>
+        </div>
+        <div class="product-card" data-id="8">
+          <span class="product-badge">Qty: 6</span>
+          <img src="image/placeholder.png" alt="Baby Care Wipes" class="product-img" />
+          <div class="product-name">Baby Care Wipes</div>
+          <div class="product-desc">Gentle, hypoallergenic, trusted by moms.</div>
+          <div class="product-price">₱90.00</div>
+          <button class="product-add"><i class="ri-shopping-cart-2-line"></i> Add to Cart</button>
+        </div>
+        <div class="product-card" data-id="9">
+          <span class="product-badge">Qty: 10</span>
+          <img src="image/placeholder.png" alt="Premium Coffee (100g)" class="product-img" />
+          <div class="product-name">Premium Coffee (100g)</div>
+          <div class="product-desc">Locally sourced, rich flavor, perfect for mornings.</div>
+          <div class="product-price">₱75.00</div>
+          <button class="product-add"><i class="ri-shopping-cart-2-line"></i> Add to Cart</button>
+        </div>
+        <div class="product-card" data-id="10">
+          <span class="product-badge">Qty: 11</span>
+          <img src="image/placeholder.png" alt="Fruit Juice (1L)" class="product-img" />
+          <div class="product-name">Fruit Juice (1L)</div>
+          <div class="product-desc">Refreshing, healthy, ready to serve.</div>
+          <div class="product-price">₱65.00</div>
+          <button class="product-add"><i class="ri-shopping-cart-2-line"></i> Add to Cart</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="info-sections" id="testimonials">
+      <div class="info-card">
+        <div class="info-icon"><i class="ri-chat-3-line"></i></div>
+        <div class="info-title">Testimonial</div>
+        <div class="info-desc">
+          “Fresh items every week and the staff are always helpful — delivery was on time.” — M. Cruz, Evergreen Homes, Las Piñas City
+        </div>
+      </div>
+      <div class="info-card">
+        <div class="info-icon"><i class="ri-chat-3-line"></i></div>
+        <div class="info-title">Testimonial</div>
+        <div class="info-desc">
+          “Affordable prices and convenient location for our family.” — R. Santos, Pulang Lupa Uno
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="info-sections" id="faq">
+      <div class="info-card">
+        <div class="info-icon"><i class="ri-question-answer-line"></i></div>
+        <div class="info-title">How do I order for delivery?</div>
+        <div class="info-desc">Call +63 921 370 8965 or email info@cecyramarket.store with your item list and address.</div>
+      </div>
+      <div class="info-card">
+        <div class="info-icon"><i class="ri-question-answer-line"></i></div>
+        <div class="info-title">Payment options?</div>
+        <div class="info-desc">Cash, GCash, PayMaya, and in-store card payments.</div>
+      </div>
+      <div class="info-card">
+        <div class="info-icon"><i class="ri-question-answer-line"></i></div>
+        <div class="info-title">Can I pick up in-store?</div>
+        <div class="info-desc">Yes, select “store pickup” when ordering and indicate pickup time.</div>
+      </div>
+      <div class="info-card">
+        <div class="info-icon"><i class="ri-question-answer-line"></i></div>
+        <div class="info-title">Returns?</div>
+        <div class="info-desc">Perishables: replacement/refund within 24hr with receipt. Non-perishables: manufacturer warranty.</div>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section class="info-sections" id="contact">
+      <div class="info-card">
+        <div class="info-icon"><i class="ri-map-pin-line"></i></div>
+        <div class="info-title">Visit Us</div>
+        <div class="info-desc">
+          4 Interior Kalubasa St, Evergreen Homes, Pulang Lupa Uno, Las Piñas City, NCR 1742, Philippines
+        </div>
+      </div>
+      <div class="info-card">
+        <div class="info-icon"><i class="ri-phone-line"></i></div>
+        <div class="info-title">Phone</div>
+        <div class="info-desc">
+          <a href="tel:+639213708965">+63 921 370 8965</a>
+        </div>
+      </div>
+      <div class="info-card">
+        <div class="info-icon"><i class="ri-mail-send-line"></i></div>
+        <div class="info-title">Email</div>
+        <div class="info-desc">
+          <a href="mailto:info@cecyramarket.store">info@cecyramarket.store</a>
+        </div>
+      </div>
+      <div class="info-card">
+        <div class="info-icon"><i class="ri-time-line"></i></div>
+        <div class="info-title">Hours</div>
+        <div class="info-desc">
+          Mon–Sat: 8am–8pm<br>Sun: 8am–6pm
+        </div>
+      </div>
+    </section>
+
+    <!-- Policy Links Section -->
+    <section class="policy-sections" id="policies">
+      <div class="policy-card">
+        <div class="policy-title">Privacy Policy</div>
+        <div class="policy-body">
+          Personal information is used only to process orders and communicate with customers.<br>
+          <em>This is a placeholder. Full policy coming soon.</em>
+        </div>
+      </div>
+      <div class="policy-card">
+        <div class="policy-title">Terms of Service</div>
+        <div class="policy-body">
+          By using CECYRA RETAIL MARKET, you agree to our terms including compliance with laws and use of real customer info.<br>
+          <em>This is a placeholder. Full terms will be published soon.</em>
+        </div>
+      </div>
+      <div class="policy-card">
+        <div class="policy-title">Refund Policy</div>
+        <div class="policy-body">
+          Returns for perishables within 24hr with receipt; non-perishables follow standard warranty.<br>
+          <em>This is a placeholder. Full refund policy coming soon.</em>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <div class="footer-logo">
+          <img src="image/LOGO.png" alt="CECYRA Retail Market Logo" />
+          CECYRA RETAIL MARKET
+        </div>
+        <div class="footer-desc">
+          4 Interior Kalubasa St, Evergreen Homes, Pulang Lupa Uno, Las Piñas City, NCR 1742, Philippines<br>
+          Email: <a href="mailto:info@cecyramarket.store" style="color:var(--accent);">info@cecyramarket.store</a><br>
+          Phone: <a href="tel:+639213708965" style="color:var(--accent);">+63 921 370 8965</a><br>
+          TIN: 173-495-620-000
+        </div>
+      </div>
+      <div class="footer-links-group">
+        <div class="footer-links-title">Company</div>
+        <div class="footer-links">
+          <a href="#about" class="footer-link">About Us</a>
+          <a href="#services" class="footer-link">Services</a>
+          <a href="#contact" class="footer-link">Contact</a>
+        </div>
+      </div>
+      <div class="footer-links-group">
+        <div class="footer-links-title">Help</div>
+        <div class="footer-links">
+          <a href="#testimonials" class="footer-link">Testimonials</a>
+          <a href="#faq" class="footer-link">FAQ</a>
+        </div>
+      </div>
+      <div class="footer-links-group">
+        <div class="footer-links-title">Legal</div>
+        <div class="footer-links">
+          <a href="privacy-policy.html" class="footer-link">Privacy Policy</a>
+          <a href="terms.html" class="footer-link">Terms of Service</a>
+          <a href="refund-policy.html" class="footer-link">Refund Policy</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      &copy; <span id="footer-year"></span> CECYRA RETAIL MARKET | TIN: 173-495-620-000<br>
+      Proudly serving Las Piñas City and surrounding communities.
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script>
+    // Navigation for mobile
+    const navToggle = document.getElementById('nav-toggle');
+    const navClose = document.getElementById('nav-close');
+    const navList = document.getElementById('nav-list');
+    function showBurger(show) {
+      // Only show/hide burger button on mobile screen
+      if (window.innerWidth <= 700) {
+        navToggle.style.display = show ? 'block' : 'none';
+      } else {
+        navToggle.style.display = '';
+      }
+    }
+    navToggle && navToggle.addEventListener('click', () => {
+      navList.classList.add('open');
+      showBurger(false);
+    });
+    navClose && navClose.addEventListener('click', () => {
+      navList.classList.remove('open');
+      showBurger(true);
+    });
+    document.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        navList.classList.remove('open');
+        showBurger(true);
+      });
+    });
+    // On resize, reset burger button visibility
+    window.addEventListener('resize', function() {
+      if (!navList.classList.contains('open')) {
+        showBurger(true);
+      } else {
+        showBurger(false);
+      }
+    });
+    // Initial state
+    showBurger(true);
+
+    // Cart functionality
+    let cart = [];
+    const products = [
+      {
+        id: 1, name: "Fresh Lettuce", price: 35.99, img: "image/placeholder.png"
+      },
+      {
+        id: 2, name: "Whole Chicken", price: 180.00, img: "image/placeholder.png"
+      },
+      {
+        id: 3, name: "Premium Jasmine Rice", price: 320.00, img: "image/placeholder.png"
+      },
+      {
+        id: 4, name: "Eggs (Tray of 30)", price: 170.00, img: "image/placeholder.png"
+      },
+      {
+        id: 5, name: "Pandesal (12 pcs)", price: 49.00, img: "image/placeholder.png"
+      },
+      {
+        id: 6, name: "Laundry Detergent (1kg)", price: 60.00, img: "image/placeholder.png"
+      },
+      {
+        id: 7, name: "Cooking Oil (1L)", price: 95.00, img: "image/placeholder.png"
+      },
+      {
+        id: 8, name: "Baby Care Wipes", price: 90.00, img: "image/placeholder.png"
+      },
+      {
+        id: 9, name: "Premium Coffee (100g)", price: 75.00, img: "image/placeholder.png"
+      },
+      {
+        id: 10, name: "Fruit Juice (1L)", price: 65.00, img: "image/placeholder.png"
+      }
+    ];
+
+    const cartBtn = document.getElementById('cart-btn');
+    const cartSidebar = document.getElementById('cart-sidebar');
+    const cartCloseBtn = document.getElementById('cart-close-btn');
+    const cartOverlay = document.getElementById('cart-overlay');
+    const cartItemsContainer = document.getElementById('cart-items');
+    const cartItemsCount = document.getElementById('cart-items-count');
+    const cartTotal = document.getElementById('cart-total');
+    const checkoutBtn = document.getElementById('checkout-btn');
+
+    function openCart() {
+      cartSidebar.classList.add('open');
+      cartOverlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeCart() {
+      cartSidebar.classList.remove('open');
+      cartOverlay.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+    cartBtn && cartBtn.addEventListener('click', openCart);
+    cartCloseBtn && cartCloseBtn.addEventListener('click', closeCart);
+    cartOverlay && cartOverlay.addEventListener('click', closeCart);
+
+    // Add to cart logic
+    document.querySelectorAll('.product-add').forEach((btn, idx) => {
+      btn.addEventListener('click', function() {
+        const card = btn.closest('.product-card');
+        const pid = parseInt(card.getAttribute('data-id'));
+        addToCart(pid);
+      });
+    });
+
+    function addToCart(productId) {
+      const prod = products.find(p => p.id === productId);
+      const itemIndex = cart.findIndex(i => i.id === productId);
+      if (itemIndex > -1) {
+        cart[itemIndex].qty += 1;
+      } else {
+        cart.push({
+          id: prod.id,
+          name: prod.name,
+          price: prod.price,
+          img: prod.img,
+          qty: 1
+        });
+      }
+      renderCart();
+    }
+
+    function increaseQty(productId) {
+      const item = cart.find(i => i.id === productId);
+      if (item) {
+        item.qty += 1;
+        renderCart();
+      }
+    }
+
+    function decreaseQty(productId) {
+      const item = cart.find(i => i.id === productId);
+      if (item && item.qty > 1) {
+        item.qty -= 1;
+        renderCart();
+      }
+    }
+
+    function removeItem(productId) {
+      cart = cart.filter(i => i.id !== productId);
+      renderCart();
+    }
+
+    function renderCart() {
+      cartItemsContainer.innerHTML = '';
+      if (cart.length === 0) {
+        cartItemsContainer.innerHTML = '<div style="text-align:center;color:#aaa;font-size:1rem;">Your cart is empty.</div>';
+      } else {
+        cart.forEach(item => {
+          const div = document.createElement('div');
+          div.className = 'cart-item';
+          div.innerHTML = `
+            <img src="${item.img}" alt="${item.name}" class="cart-item-img">
+            <div class="cart-item-details">
+              <div class="cart-item-title">${item.name}</div>
+              <div class="cart-item-price">₱${item.price}</div>
+              <div class="cart-item-qty">
+                <button class="cart-item-qty-btn" aria-label="Decrease quantity"><i class="ri-subtract-line"></i></button>
+                <span>${item.qty}</span>
+                <button class="cart-item-qty-btn" aria-label="Increase quantity"><i class="ri-add-line"></i></button>
+                <button class="cart-item-remove" aria-label="Remove item"><i class="ri-delete-bin-6-line"></i></button>
+              </div>
+            </div>
+          `;
+          div.querySelector('.cart-item-qty-btn[aria-label="Decrease quantity"]').addEventListener('click', function() {
+            decreaseQty(item.id);
+          });
+          div.querySelector('.cart-item-qty-btn[aria-label="Increase quantity"]').addEventListener('click', function() {
+            increaseQty(item.id);
+          });
+          div.querySelector('.cart-item-remove').addEventListener('click', function() {
+            removeItem(item.id);
+          });
+          cartItemsContainer.appendChild(div);
+        });
+      }
+      cartItemsCount.textContent = cart.reduce((total, i) => total + i.qty, 0);
+      cartTotal.textContent = '₱' + cart.reduce((total, i) => total + i.qty * i.price, 0).toFixed(2);
+    }
+
+    // Initial cart render (empty)
+    renderCart();
+
+    // Footer year
+    document.getElementById('footer-year').textContent = new Date().getFullYear();
+
+    // Checkout button - redirect to order-summary.html
+    checkoutBtn && checkoutBtn.addEventListener('click', function() {
+      window.location.href = "order-summary.html";
+    });
+  </script>
+</body>
+</html>
